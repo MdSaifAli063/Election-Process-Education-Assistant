@@ -39,16 +39,6 @@ export default function Navbar() {
     { to: '/learn',       label: t('nav.learn') },
   ];
 
-  const getLangLabel = (code) => {
-    const labels = {
-      en: '🇺🇸 English',
-      es: '🇪🇸 Español',
-      hi: '🇮🇳 हिन्दी',
-      ur: '🇵🇰 اردو'
-    };
-    return labels[code] || code.toUpperCase();
-  };
-
   return (
     <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`} role="banner">
       <div className="container navbar__inner">
@@ -89,16 +79,22 @@ export default function Navbar() {
             </button>
             {langOpen && (
               <div className="navbar__lang-dropdown animate-fade-in" role="menu">
-                {availableLangs.map(l => (
-                  <button
-                    key={l}
-                    className={`navbar__lang-item ${lang === l ? 'navbar__lang-item--active' : ''}`}
-                    onClick={() => { setLanguage(l); setLangOpen(false); }}
-                    role="menuitem"
-                  >
-                    {getLangLabel(l)}
-                  </button>
-                ))}
+                {availableLangs.map(l => {
+                  const getLangLabel = (code) => {
+                    const labels = { en: '🇺🇸 English', es: '🇪🇸 Español', hi: '🇮🇳 हिन्दी', ur: '🇵🇰 اردو' };
+                    return labels[code] || code.toUpperCase();
+                  };
+                  return (
+                    <button
+                      key={l}
+                      className={`navbar__lang-item ${lang === l ? 'navbar__lang-item--active' : ''}`}
+                      onClick={() => { setLanguage(l); setLangOpen(false); }}
+                      role="menuitem"
+                    >
+                      {getLangLabel(l)}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>

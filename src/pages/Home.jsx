@@ -116,7 +116,7 @@ export default function Home() {
           </div>
 
           {/* Hero Visual */}
-          <div className="hero__visual animate-float" aria-hidden="true">
+          <div className="hero__visual animate-float" aria-hidden="true" style={{ transform: 'scale(0.88)', transformOrigin: 'center center' }}>
             <div className="hero__visual-card glass">
               <div className="hero__visual-header">
                 <div className="hero__visual-dots">
@@ -128,14 +128,14 @@ export default function Home() {
               </div>
               <div className="hero__visual-stages">
                 {electionStages.map((s, i) => (
-                  <div key={s.num} className="hero__stage" style={{ animationDelay: `${0.6 + i * 0.08}s` }}>
-                    <div className="hero__stage-dot" style={{ background: s.color }}></div>
-                    <div className="hero__stage-line" style={{ background: i < electionStages.length - 1 ? `linear-gradient(${s.color}, ${electionStages[i+1]?.color || s.color})` : s.color }}></div>
-                    <div className="hero__stage-info">
-                      <span className="hero__stage-icon">{s.icon}</span>
-                      <div>
-                        <span className="hero__stage-num">{s.num}</span>
-                        <span className="hero__stage-label">{s.label}</span>
+                  <div key={s.num} className="hero__stage" style={{ animationDelay: `${0.6 + i * 0.08}s`, padding: '6px 12px', justifyContent: 'flex-start' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+                      <div className="hero__stage-icon" style={{ width: '28px', height: '28px', borderRadius: '8px', background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>
+                        {s.icon}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ background: s.color, color: '#ffffff', padding: '2px 6px', borderRadius: '12px', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em' }}>{s.num}</span>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>{s.label}</span>
                       </div>
                     </div>
                   </div>
@@ -153,7 +153,7 @@ export default function Home() {
             { value: '7', label: t('stats.stages') },
             { value: '15+', label: t('stats.topics') },
             { value: '50+', label: t('stats.quizzes') },
-            { value: '2', label: t('stats.languages') },
+            { value: '4', label: t('stats.languages') },
           ].map(({ value, label }) => (
             <div key={label} className="stats-bar__item">
               <span className="stats-bar__value gradient-text">{value}</span>
