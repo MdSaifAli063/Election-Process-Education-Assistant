@@ -27,7 +27,6 @@ export default function App() {
           <Route path="/timeline"    element={<Timeline />} />
           <Route path="/eligibility" element={<Eligibility />} />
           <Route path="/learn"       element={<Learn />} />
-          {/* 404 fallback */}
           <Route path="*" element={
             <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', padding: '2rem', textAlign: 'center' }}>
               <span style={{ fontSize: '5rem' }}>🗳️</span>

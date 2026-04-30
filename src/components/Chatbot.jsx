@@ -58,9 +58,10 @@ export default function Chatbot() {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
       
-      // Fallback: Removed googleSearch tool because it requires a paid/billed API key
+      // Google Search requires a paid API tier. Uncomment tools array when billing is enabled.
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-flash-latest"
+        model: "gemini-flash-latest",
+        // tools: [{ googleSearch: {} }] 
       });
       
       const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -75,6 +76,28 @@ export default function Chatbot() {
     }
   };
 
+  const fetchWebContext = async (query) => {
+    try {
+      // Free web search using Wikipedia API to bypass Google quota limits
+      const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+      const searchRes = await fetch(searchUrl);
+      const searchData = await searchRes.json();
+      
+      if (searchData.query?.search?.length > 0) {
+        const title = searchData.query.search[0].title;
+        const pageUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exsentences=4&exlimit=1&titles=${encodeURIComponent(title)}&explaintext=1&format=json&origin=*`;
+        const pageRes = await fetch(pageUrl);
+        const pageData = await pageRes.json();
+        const pages = pageData.query.pages;
+        const pageId = Object.keys(pages)[0];
+        return pages[pageId].extract;
+      }
+    } catch (e) {
+      console.error("Web search failed", e);
+    }
+    return null;
+  };
+
   const sendMessage = async () => {
     const text = input.trim();
     if (!text) return;
@@ -84,7 +107,13 @@ export default function Chatbot() {
     setInput('');
     setTyping(true);
 
-    const replyText = await getGeminiResponse(text);
+    // Perform live web search to get real-time data for the AI
+    const webContext = await fetchWebContext(text);
+    const enrichedText = webContext 
+      ? `Real-time Web Search Results:\n${webContext}\n\nPlease use the above information to answer the user's question accurately.\n\nUser Question: ${text}` 
+      : text;
+
+    const replyText = await getGeminiResponse(enrichedText);
     
     setTyping(false);
     setMessages(m => [...m, { id: Date.now() + 1, from: 'bot', text: replyText, time: new Date() }]);
