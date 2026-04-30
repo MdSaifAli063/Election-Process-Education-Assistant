@@ -38,6 +38,7 @@ export default function Chatbot() {
   ]);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
+  const [searching, setSearching] = useState(false);
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -64,9 +65,13 @@ export default function Chatbot() {
         // tools: [{ googleSearch: {} }] 
       });
       
-      const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      
-      const systemPrompt = `You are ElectED, an expert, friendly, and non-partisan Election Education Assistant. The current date is ${currentDate}. You have access to Google Search—ALWAYS use it to fetch real-time, current data if the user asks about current elections, current candidates, or recent events. Explain the election process, voting requirements, political systems, and democracy in simple, accessible language. Use emojis and bullet points to make answers readable. Keep answers concise (under 150 words). Never take a political stance or endorse candidates.\n\nUser Question: `;
+      const systemPrompt = `You are ElectED, a highly intelligent and up-to-date AI Assistant. The current year is 2026. 
+
+I will provide you with "Real-time Web Search Results" for the user's query. You MUST prioritize the information in those results to ensure your answer is current and accurate for today's date. 
+
+If the user asks about elections, be an expert, non-partisan guide. If they ask about anything else, provide a factual, helpful, and concise response. Use emojis and bullet points for readability. Keep answers under 150 words.
+
+User Question: `;
       
       const result = await model.generateContent(systemPrompt + promptText);
       return result.response.text();
@@ -77,25 +82,39 @@ export default function Chatbot() {
   };
 
   const fetchWebContext = async (query) => {
+    setSearching(true);
+    let context = "";
     try {
-      // Free web search using Wikipedia API to bypass Google quota limits
+      // Source 1: DuckDuckGo Instant Answer (Quick facts)
+      const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&origin=*`;
+      const ddgRes = await fetch(ddgUrl);
+      const ddgData = await ddgRes.json();
+      if (ddgData.AbstractText) {
+        context += `DuckDuckGo Info: ${ddgData.AbstractText}\n\n`;
+      }
+
+      // Source 2: Wikipedia (Deep data)
       const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
       const searchRes = await fetch(searchUrl);
       const searchData = await searchRes.json();
       
       if (searchData.query?.search?.length > 0) {
         const title = searchData.query.search[0].title;
-        const pageUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exsentences=4&exlimit=1&titles=${encodeURIComponent(title)}&explaintext=1&format=json&origin=*`;
+        const pageUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exsentences=8&exlimit=1&titles=${encodeURIComponent(title)}&explaintext=1&format=json&origin=*`;
         const pageRes = await fetch(pageUrl);
         const pageData = await pageRes.json();
         const pages = pageData.query.pages;
         const pageId = Object.keys(pages)[0];
-        return pages[pageId].extract;
+        if (pages[pageId].extract) {
+          context += `Wikipedia Data: ${pages[pageId].extract}`;
+        }
       }
     } catch (e) {
       console.error("Web search failed", e);
+    } finally {
+      setSearching(false);
     }
-    return null;
+    return context || null;
   };
 
   const sendMessage = async () => {
@@ -105,12 +124,13 @@ export default function Chatbot() {
     const userMsg = { id: Date.now(), from: 'user', text, time: new Date() };
     setMessages(m => [...m, userMsg]);
     setInput('');
-    setTyping(true);
-
-    // Perform live web search to get real-time data for the AI
+    
+    // Perform multi-source live web search
     const webContext = await fetchWebContext(text);
+    
+    setTyping(true);
     const enrichedText = webContext 
-      ? `Real-time Web Search Results:\n${webContext}\n\nPlease use the above information to answer the user's question accurately.\n\nUser Question: ${text}` 
+      ? `[HIGH-LEVEL WEB SEARCH RESULTS]\n${webContext}\n\n[USER QUESTION]\n${text}\n\nPlease analyze the search data above and provide a definitive, up-to-date answer.` 
       : text;
 
     const replyText = await getGeminiResponse(enrichedText);
@@ -186,6 +206,15 @@ export default function Chatbot() {
                 )}
               </div>
             ))}
+            {searching && (
+              <div className="chatbot-msg chatbot-msg--bot">
+                <div className="chatbot-msg__avatar"><Bot size={14} /></div>
+                <div className="chatbot-msg__bubble" style={{ fontSize: '0.8rem', fontStyle: 'italic', opacity: 0.8 }}>
+                  <Sparkles size={12} style={{ marginRight: 6, color: 'var(--color-primary-400)' }} />
+                  Searching web for answers...
+                </div>
+              </div>
+            )}
             {typing && (
               <div className="chatbot-msg chatbot-msg--bot">
                 <div className="chatbot-msg__avatar"><Bot size={14} /></div>
