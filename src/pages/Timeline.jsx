@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, ExternalLink, Clock, Info } from 'lucide-react';
+
 import './Timeline.css';
 
 const stages = [
@@ -20,6 +22,7 @@ const stages = [
     ],
     milestone: 'Registration Deadline',
     status: 'completed',
+    action: { label: 'Check Your Eligibility', link: '/eligibility' }
   },
   {
     id: 2,
@@ -38,6 +41,7 @@ const stages = [
     ],
     milestone: 'Filing Deadline',
     status: 'completed',
+    action: { label: 'Explore Offices', link: '/learn' }
   },
   {
     id: 3,
@@ -56,6 +60,7 @@ const stages = [
     ],
     milestone: 'Debate Season',
     status: 'active',
+    action: { label: 'Learn about Debates', link: '/learn' }
   },
   {
     id: 4,
@@ -74,7 +79,9 @@ const stages = [
     ],
     milestone: 'Election Day',
     status: 'upcoming',
+    action: { label: 'Find Your Station', link: '/' }
   },
+
   {
     id: 5,
     icon: '📊',
@@ -92,7 +99,9 @@ const stages = [
     ],
     milestone: 'Results Reported',
     status: 'upcoming',
+    action: { label: 'How Votes are Counted', link: '/learn' }
   },
+
   {
     id: 6,
     icon: '✅',
@@ -110,6 +119,7 @@ const stages = [
     ],
     milestone: 'Results Certified',
     status: 'upcoming',
+    action: { label: 'Explore Civic Basics', link: '/learn' }
   },
   {
     id: 7,
@@ -128,7 +138,9 @@ const stages = [
     ],
     milestone: 'Inauguration Day',
     status: 'upcoming',
+    action: { label: 'Test Your Knowledge', link: '/learn' }
   },
+
 ];
 
 const phaseColors = { 'Pre-Election': '#6366f1', Campaign: '#06b6d4', Voting: '#10b981', 'Post-Election': '#f59e0b', Transition: '#ec4899' };
@@ -250,8 +262,17 @@ export default function Timeline() {
                         </ul>
                       </div>
                     </div>
+
+                    {stage.action && (
+                      <div className="timeline-actions">
+                        <Link to={stage.action.link} className="btn-primary timeline-btn" style={{ '--accent': stage.color }}>
+                          {stage.action.label} <ExternalLink size={14} />
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 )}
+
 
                 {/* Progress bar */}
                 <div className="progress-bar" style={{ marginTop: 'var(--space-4)' }}>

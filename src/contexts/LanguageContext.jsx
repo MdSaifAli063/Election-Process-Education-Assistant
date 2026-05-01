@@ -12,7 +12,17 @@ const translations = {
       subtitle: 'An interactive, step-by-step guide that simplifies complex election concepts into a clear, engaging, and personalized learning experience.',
       cta1: 'Start Exploring',
       cta2: 'Check Eligibility',
+      stages: [
+        { num: '01', label: 'Voter Registration', icon: '📋', color: '#6366f1' },
+        { num: '02', label: 'Candidate Filing', icon: '🚀', color: '#a855f7' },
+        { num: '03', label: 'Campaign Period', icon: '📣', color: '#06b6d4' },
+        { num: '04', label: 'Voting Day', icon: '🗳️', color: '#22c55e' },
+        { num: '05', label: 'Vote Counting', icon: '📊', color: '#f59e0b' },
+        { num: '06', label: 'Certification', icon: '✅', color: '#ef4444' },
+        { num: '07', label: 'Inauguration', icon: '🏛️', color: '#ec4899' }
+      ]
     },
+
     stats: {
       stages: 'Election Stages', topics: 'Topics Covered', quizzes: 'Quiz Questions', languages: 'Languages',
     },
@@ -38,7 +48,17 @@ const translations = {
       subtitle: 'Una guía interactiva que simplifica los conceptos electorales complejos en una experiencia de aprendizaje clara y atractiva.',
       cta1: 'Comenzar a Explorar',
       cta2: 'Verificar Elegibilidad',
+      stages: [
+        { num: '01', label: 'Registro de Votantes', icon: '📋', color: '#6366f1' },
+        { num: '02', label: 'Registro de Candidatos', icon: '🚀', color: '#a855f7' },
+        { num: '03', label: 'Periodo de Campaña', icon: '📣', color: '#06b6d4' },
+        { num: '04', label: 'Día de la Votación', icon: '🗳️', color: '#22c55e' },
+        { num: '05', label: 'Conteo de Votos', icon: '📊', color: '#f59e0b' },
+        { num: '06', label: 'Certificación', icon: '✅', color: '#ef4444' },
+        { num: '07', label: 'Inauguración', icon: '🏛️', color: '#ec4899' }
+      ]
     },
+
     stats: {
       stages: 'Etapas', topics: 'Temas', quizzes: 'Preguntas', languages: 'Idiomas',
     },
@@ -64,7 +84,17 @@ const translations = {
       subtitle: 'एक इंटरैक्टिव, चरण-दर-चरण मार्गदर्शिका जो जटिल चुनाव अवधारणाओं को एक स्पष्ट, आकर्षक अनुभव में सरल बनाती है।',
       cta1: 'एक्सप्लोर करें',
       cta2: 'योग्यता जांचें',
+      stages: [
+        { num: '01', label: 'मतदाता पंजीकरण', icon: '📋', color: '#6366f1' },
+        { num: '02', label: 'उम्मीदवार नामांकन', icon: '🚀', color: '#a855f7' },
+        { num: '03', label: 'चुनाव प्रचार', icon: '📣', color: '#06b6d4' },
+        { num: '04', label: 'मतदान दिवस', icon: '🗳️', color: '#22c55e' },
+        { num: '05', label: 'मतगणना', icon: '📊', color: '#f59e0b' },
+        { num: '06', label: 'प्रमाणन', icon: '✅', color: '#ef4444' },
+        { num: '07', label: 'शपथ ग्रहण', icon: '🏛️', color: '#ec4899' }
+      ]
     },
+
     stats: {
       stages: 'चरण', topics: 'विषय', quizzes: 'प्रश्न', languages: 'भाषाएं',
     },
@@ -90,7 +120,17 @@ const translations = {
       subtitle: 'ایک انٹرایکٹو، مرحلہ وار گائیڈ جو پیچیدہ انتخابی تصورات کو ایک واضح، پرکشش تجربے میں آسان بناتی ہے۔',
       cta1: 'ایکسپلور کریں',
       cta2: 'اہلیت چیک کریں',
+      stages: [
+        { num: '01', label: 'ووٹر رجسٹریشن', icon: '📋', color: '#6366f1' },
+        { num: '02', label: 'امیدوار کا اندراج', icon: '🚀', color: '#a855f7' },
+        { num: '03', label: 'انتخابی مہم', icon: '📣', color: '#06b6d4' },
+        { num: '04', label: 'ووٹنگ کا دن', icon: '🗳️', color: '#22c55e' },
+        { num: '05', label: 'ووٹوں کی گنتی', icon: '📊', color: '#f59e0b' },
+        { num: '06', label: 'تصدیق', icon: '✅', color: '#ef4444' },
+        { num: '07', label: 'حلف برداری', icon: '🏛️', color: '#ec4899' }
+      ]
     },
+
     stats: {
       stages: 'مراحل', topics: 'موضوعات', quizzes: 'سوالات', languages: 'زبانیں',
     },
