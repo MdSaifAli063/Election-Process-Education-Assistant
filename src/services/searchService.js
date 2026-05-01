@@ -10,7 +10,8 @@ export const performWebSearch = async (query, apiKey) => {
   }
 
   try {
-    const response = await fetch('https://api.tavily.com/search', {
+    const response = await fetch(`${window.location.origin}/search-api/search`, {
+
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

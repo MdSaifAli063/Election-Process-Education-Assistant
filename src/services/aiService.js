@@ -7,8 +7,9 @@ import OpenAI from 'openai';
 export const generateNimResponse = async (prompt, apiKey, language = 'en-US') => {
   const openai = new OpenAI({
     apiKey: apiKey,
-    baseURL: "https://integrate.api.nvidia.com/v1", 
+    baseURL: `${window.location.origin}/nim-api`, 
     dangerouslyAllowBrowser: true 
+
   });
 
 
@@ -61,17 +62,18 @@ export const generateGeminiResponse = async (prompt, apiKey, language = 'en-US')
     if (error.message.includes("404") || error.message.includes("not found")) {
       // Extensive fallback for GCP projects
       const fallbacks = [
-        { model: "gemini-1.5-flash", version: "v1beta" },
-        { model: "gemini-pro", version: "v1" },
-        { model: "gemini-1.0-pro", version: "v1" }
+        { model: "gemini-1.5-flash", version: "v1" },
+        { model: "gemini-1.5-pro", version: "v1beta" },
+        { model: "gemini-pro", version: "v1" }
       ];
+
       
       for (const fb of fallbacks) {
         try {
           console.log(`Trying Gemini fallback: ${fb.model} (${fb.version})`);
           const fbModel = genAI.getGenerativeModel(
             { model: fb.model }, 
-            { apiVersion: fb.version, baseUrl: `${window.location.origin}/gemini-api` }
+            { apiVersion: fb.version }
           );
 
           const fbResult = await fbModel.generateContent(`${systemPrompt}\n\n${prompt}`);
@@ -80,6 +82,7 @@ export const generateGeminiResponse = async (prompt, apiKey, language = 'en-US')
           continue;
         }
       }
+
     }
     throw new Error(`Gemini: ${error.message || 'Connection failed'}`);
   }
