@@ -172,11 +172,13 @@ body::after {
   animation: meshFlow 30s infinite alternate ease-in-out;
   mix-blend-mode: multiply;
   filter: blur(60px);
+  will-change: transform;
 }
 
 [data-theme="dark"] .mesh-blob {
   mix-blend-mode: screen;
   opacity: 0.7;
+  will-change: transform, opacity;
 }
 
 .mesh-blob--1 {

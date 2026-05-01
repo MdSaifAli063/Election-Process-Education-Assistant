@@ -1,83 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BookOpen, Award, ChevronRight, RotateCcw, CheckCircle2, XCircle, Star, Trophy, Lightbulb, Brain } from 'lucide-react';
 import './Learn.css';
-
-const modules = [
-  {
-    id: 'basics',
-    icon: '📖',
-    color: '#6366f1',
-    title: 'Election Basics',
-    desc: 'Foundational concepts every voter should know.',
-    cards: [
-      { front: 'What is a Democracy?', back: 'Democracy is a system of government where citizens directly or indirectly participate in decision-making through free and fair elections. The word comes from the Greek "demos" (people) and "kratos" (power).' },
-      { front: 'What is a Ballot?', back: 'A ballot is the official form used to record a voter\'s choices. It can be a paper form, a digital touchscreen, or a mail-in envelope. Every ballot is secret — no one can see how you voted.' },
-      { front: 'What is a Polling Place?', back: 'A polling place (or polling station) is the location where voters go to cast their in-person ballots on Election Day. Your polling place is determined by your registered home address.' },
-      { front: 'What is a Precinct?', back: 'A precinct is the smallest geographic unit in an election system. Each precinct has its own polling place. Results are counted and reported by precinct, then totalled up to determine the winner.' },
-    ],
-  },
-  {
-    id: 'registration',
-    icon: '📋',
-    color: '#8b5cf6',
-    title: 'Voter Registration',
-    desc: 'Everything about signing up to vote.',
-    cards: [
-      { front: 'What is Voter Registration?', back: 'Voter registration is the process of adding your name to the official list of eligible voters in your jurisdiction. Without registration, you cannot cast a ballot in most elections.' },
-      { front: 'Why do we need to register?', back: 'Registration creates an official voter roll that helps election officials manage polling places, prevent duplicate voting, and ensure only eligible people participate. It\'s a quality-control mechanism for democracy.' },
-      { front: 'What is Automatic Voter Registration?', back: 'Automatic Voter Registration (AVR) automatically registers eligible citizens when they interact with government agencies (like the DMV) unless they opt out. Over 20 US states have implemented AVR.' },
-      { front: 'What is Same-Day Registration?', back: 'Same-Day Registration (SDR) allows voters to register (or update their registration) on Election Day itself at the polling place. About 22 US states offer this option.' },
-    ],
-  },
-  {
-    id: 'process',
-    icon: '⚙️',
-    color: '#06b6d4',
-    title: 'How Voting Works',
-    desc: 'The mechanics of casting and counting votes.',
-    cards: [
-      { front: 'What is a Secret Ballot?', back: 'A secret ballot means your specific voting choices are private. While election officials know you voted, no one (not even government officials) can see how you voted. This protects voters from intimidation.' },
-      { front: 'What is Ranked Choice Voting?', back: 'Ranked Choice Voting (RCV) lets voters rank candidates in order of preference (1st, 2nd, 3rd choice). If no candidate wins a majority, the last-place candidate is eliminated and their votes are redistributed.' },
-      { front: 'What is a Provisional Ballot?', back: 'A provisional ballot is issued when there\'s a question about a voter\'s eligibility on Election Day (e.g., name not on rolls). It\'s counted after election officials verify the voter\'s eligibility.' },
-      { front: 'What is a Recount?', back: 'A recount is a repeat tabulation of votes cast in an election, usually triggered when the margin of victory is extremely small (often < 0.5%). Recounts can be manual (hand-counted) or machine-conducted.' },
-    ],
-  },
-  {
-    id: 'types',
-    icon: '🗂️',
-    color: '#10b981',
-    title: 'Types of Elections',
-    desc: 'Understanding different election categories.',
-    cards: [
-      { front: 'Primary vs. General Election', back: 'A PRIMARY election is held within a political party to select their nominee. The GENERAL election is the main election between nominees from different parties (and independents). General elections determine the actual winner.' },
-      { front: 'What is a Referendum?', back: 'A referendum (or ballot measure) asks voters to directly vote on a specific policy, law, or constitutional amendment — rather than choosing between candidates. It\'s a form of direct democracy.' },
-      { front: 'What is a Special Election?', back: 'A special election is held outside the normal election schedule to fill a vacant seat (e.g., when a representative dies or resigns). They often have very low voter turnout.' },
-      { front: 'What is a Runoff Election?', back: 'A runoff election is held when no candidate receives the required majority (usually 50%+1) in the initial election. The top two vote-getters face off in a second, decisive election.' },
-    ],
-  },
-];
-
-const quizQuestions = [
-  { q: 'At what minimum age can most citizens vote in national elections?', options: ['16', '18', '21', '25'], correct: 1, explanation: '18 is the minimum voting age in most countries, including the US (since the 26th Amendment in 1971).' },
-  { q: 'What does "absentee voting" mean?', options: ['Voting for a candidate who is absent', 'Voting by mail when you cannot go to the polls in person', 'Refusing to vote in protest', 'Voting on behalf of someone else'], correct: 1, explanation: 'Absentee voting (or mail-in voting) allows registered voters to cast a ballot by mail instead of appearing in person at a polling place.' },
-  { q: 'What is the Electoral College in the United States?', options: ['A university that teaches politics', 'A group of electors who formally elect the President and Vice President', 'The building where Congress meets', 'A group of election officials who count votes'], correct: 1, explanation: 'The Electoral College consists of 538 electors. A candidate needs 270 electoral votes to win the presidency.' },
-  { q: 'What is a "ballot initiative"?', options: ['When the government initiates a vote', 'A process that allows citizens to propose and vote on laws directly', 'The first ballot cast in an election', 'An initiative to increase voter turnout'], correct: 1, explanation: 'A ballot initiative lets citizens (not just legislators) propose new laws or constitutional amendments by gathering enough signatures.' },
-  { q: 'Which of the following protects the secrecy of your vote?', options: ['The First Amendment', 'Party affiliation registration', 'The secret ballot system', 'Election Day ID laws'], correct: 2, explanation: 'The secret ballot (also called the Australian ballot) ensures that how you voted is private, protecting voters from coercion or punishment for their choices.' },
-  { q: 'What happens if no candidate wins a majority in some elections?', options: ['The incumbent stays in power', 'A runoff election is held between the top candidates', 'The election is declared invalid', 'The legislature decides the winner'], correct: 1, explanation: 'In jurisdictions that require a majority (50%+1), if no candidate achieves it, a runoff election is held between the top two candidates.' },
-  { q: 'Who officially certifies the results of a US presidential election?', options: ['The Supreme Court', 'The President of the United States', 'Congress, in a joint session', 'The Electoral College Board'], correct: 2, explanation: 'Congress meets in a joint session to officially count and certify the Electoral College votes, formally confirming the presidential election winner.' },
-  { q: 'What is "voter suppression"?', options: ['Keeping your vote private', 'Legal efforts to encourage more people to vote', 'Strategies or laws that make it harder for certain groups to vote', 'Suppressing election results until all votes are counted'], correct: 2, explanation: 'Voter suppression refers to strategies — legal or illegal — used to discourage or prevent specific groups of people from exercising their right to vote.' },
-  { q: 'What does "nonpartisan" mean in the context of elections?', options: ['Against all political parties', 'Not favoring or affiliated with any political party', 'Supporting multiple parties at once', 'Voting for candidates from different parties'], correct: 1, explanation: 'Nonpartisan means impartial and not affiliated with or supporting any particular political party. Many election commissions and judges are nonpartisan.' },
-  { q: 'What is "gerrymandering"?', options: ['A type of election fraud', 'Drawing electoral district boundaries to favor one party or group', 'When voter turnout is extremely low', 'The process of certifying election results'], correct: 1, explanation: 'Gerrymandering is the manipulation of electoral district boundaries to give one political party an advantage over its rivals.' },
-];
-
-const badges = [
-  { id: 'learner',   icon: '📚', title: 'Eager Learner',    desc: 'Completed your first module',      threshold: 1,  color: '#6366f1' },
-  { id: 'scholar',   icon: '🎓', title: 'Election Scholar',  desc: 'Completed 3 modules',              threshold: 3,  color: '#8b5cf6' },
-  { id: 'expert',    icon: '🏆', title: 'Democracy Expert',  desc: 'Completed all modules',            threshold: 4,  color: '#f59e0b' },
-  { id: 'quiz50',    icon: '⭐', title: 'Quiz Starter',      desc: 'Scored 50%+ on the quiz',         threshold: 5,  color: '#06b6d4', quizBased: true },
-  { id: 'quiz80',    icon: '🌟', title: 'Quiz Champion',     desc: 'Scored 80%+ on the quiz',         threshold: 8,  color: '#10b981', quizBased: true },
-  { id: 'perfect',   icon: '💎', title: 'Perfect Score!',    desc: 'Got 10/10 on the quiz',           threshold: 10, color: '#ec4899', quizBased: true },
-];
+import { modules, quizQuestions, badges } from '../constants/learnData';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Learn() {
   const [activeModule, setActiveModule] = useState(null);
@@ -90,6 +15,11 @@ export default function Learn() {
   const [quizDone, setQuizDone]         = useState(false);
   const [selectedAns, setSelectedAns]   = useState(null);
   const [showExp, setShowExp]           = useState(false);
+  const { lang } = useLanguage();
+
+  useEffect(() => {
+    document.title = `Learn & Quiz | ElectED — ${lang === 'es' ? 'Asistente del Proceso Electoral' : 'Election Process Assistant'}`;
+  }, [lang]);
 
   // ── Module / Flashcard logic ──
   const openModule = (mod) => { setActiveModule(mod); setCardIndex(0); setFlipped(false); };
