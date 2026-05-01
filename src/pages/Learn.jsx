@@ -1,37 +1,65 @@
 import { useState, useEffect } from 'react';
-import { BookOpen, Award, ChevronRight, RotateCcw, CheckCircle2, XCircle, Star, Trophy, Lightbulb, Brain } from 'lucide-react';
+import { BookOpen, Award, ChevronRight, RotateCcw, CheckCircle2, XCircle, Star, Trophy, Lightbulb, Brain, Sparkles, Loader2 } from 'lucide-react';
 import './Learn.css';
 import { modules, quizQuestions, badges } from '../constants/learnData';
 import { useLanguage } from '../contexts/LanguageContext';
+import { generateDynamicQuiz } from '../services/aiService';
 
 export default function Learn() {
   const [activeModule, setActiveModule] = useState(null);
-  const [cardIndex, setCardIndex]       = useState(0);
-  const [flipped, setFlipped]           = useState(false);
+  const [cardIndex, setCardIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
   const [completedModules, setCompleted] = useState(new Set());
-  const [quizMode, setQuizMode]         = useState(false);
-  const [quizStep, setQuizStep]         = useState(0);
-  const [quizAnswers, setQuizAnswers]   = useState([]);
-  const [quizDone, setQuizDone]         = useState(false);
-  const [selectedAns, setSelectedAns]   = useState(null);
-  const [showExp, setShowExp]           = useState(false);
+  const [quizMode, setQuizMode] = useState(false);
+  const [quizStep, setQuizStep] = useState(0);
+  const [quizAnswers, setQuizAnswers] = useState([]);
+  const [quizDone, setQuizDone] = useState(false);
+  const [selectedAns, setSelectedAns] = useState(null);
+  const [showExp, setShowExp] = useState(false);
+  const [loadingQuiz, setLoadingQuiz] = useState(false);
+  const [dynamicQuestions, setDynamicQuestions] = useState(null);
   const { lang } = useLanguage();
+
+  const geminiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+  const nimKey = import.meta.env.VITE_NVIDIA_NIM_API_KEY || '';
 
   useEffect(() => {
     document.title = `Learn & Quiz | ElectED — ${lang === 'es' ? 'Asistente del Proceso Electoral' : 'Election Process Assistant'}`;
   }, [lang]);
 
+  // ── AI Quiz logic ──
+  const startAiQuiz = async () => {
+    setLoadingQuiz(true);
+    try {
+      const q = await generateDynamicQuiz(geminiKey, nimKey, lang === 'hi' ? 'hi-IN' : lang === 'es' ? 'es-ES' : 'en-US');
+      setDynamicQuestions(q);
+      setQuizMode(true);
+      setQuizStep(0);
+      setQuizAnswers([]);
+      setQuizDone(false);
+      setSelectedAns(null);
+      setShowExp(false);
+    } catch (err) {
+      console.error("AI Quiz error:", err);
+      startQuiz(); // Fallback to static quiz
+    } finally {
+      setLoadingQuiz(false);
+    }
+  };
+
+  const currentQuestions = dynamicQuestions || quizQuestions;
+
   // ── Module / Flashcard logic ──
   const openModule = (mod) => { setActiveModule(mod); setCardIndex(0); setFlipped(false); };
   const closeModule = () => { setActiveModule(null); setFlipped(false); };
   const nextCard = () => {
-    if (cardIndex < activeModule.cards.length - 1) { setCardIndex(i => i+1); setFlipped(false); }
+    if (cardIndex < activeModule.cards.length - 1) { setCardIndex(i => i + 1); setFlipped(false); }
     else {
       setCompleted(s => new Set([...s, activeModule.id]));
       closeModule();
     }
   };
-  const prevCard = () => { if (cardIndex > 0) { setCardIndex(i => i-1); setFlipped(false); } };
+  const prevCard = () => { if (cardIndex > 0) { setCardIndex(i => i - 1); setFlipped(false); } };
 
   // ── Quiz logic ──
   const startQuiz = () => { setQuizMode(true); setQuizStep(0); setQuizAnswers([]); setQuizDone(false); setSelectedAns(null); setShowExp(false); };
@@ -42,12 +70,17 @@ export default function Learn() {
   };
   const nextQuizQ = () => {
     setQuizAnswers(a => [...a, selectedAns]);
-    if (quizStep < quizQuestions.length - 1) { setQuizStep(s => s+1); setSelectedAns(null); setShowExp(false); }
+    if (quizStep < quizQuestions.length - 1) { setQuizStep(s => s + 1); setSelectedAns(null); setShowExp(false); }
     else { setQuizDone(true); }
   };
   const resetQuiz = () => { setQuizMode(false); setQuizStep(0); setQuizAnswers([]); setQuizDone(false); setSelectedAns(null); setShowExp(false); };
 
-  const score = quizAnswers.filter((a, i) => a === quizQuestions[i].correct).length;
+  const score = quizAnswers.filter((a, i) => {
+    const q = currentQuestions[i];
+    if (typeof q.correct === 'number') return a === q.correct;
+    return q.options[a] === q.correctAnswer;
+  }).length;
+
   const earnedBadges = badges.filter(b => b.quizBased ? (quizDone && score >= b.threshold) : completedModules.size >= b.threshold);
 
   return (
@@ -180,7 +213,7 @@ export default function Learn() {
             <h2 id="quiz-heading" className="text-heading learn-section__title">
               <Star size={20} /> Election Knowledge Quiz
             </h2>
-            <p className="learn-section__sub">{quizQuestions.length} questions • Multiple choice • Earn badges</p>
+            <p className="learn-section__sub">{currentQuestions.length} questions • Multiple choice • Earn badges</p>
           </div>
 
           {!quizMode && !quizDone && (
@@ -198,31 +231,44 @@ export default function Learn() {
                   ))}
                 </div>
               </div>
-              <button className="btn btn-primary quiz-intro__cta" onClick={startQuiz}>
-                Start Quiz <ChevronRight size={18} />
-              </button>
+              <div className="quiz-intro__actions" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <button className="btn btn-primary quiz-intro__cta" onClick={startQuiz}>
+                  Standard Quiz <ChevronRight size={18} />
+                </button>
+                <button
+                  className="btn btn-secondary quiz-intro__cta"
+                  onClick={startAiQuiz}
+                  disabled={loadingQuiz}
+                  style={{ borderColor: 'var(--primary)', color: 'var(--primary)' }}
+                >
+                  {loadingQuiz ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
+                  Generate AI Quiz
+                </button>
+              </div>
             </div>
           )}
 
           {quizMode && !quizDone && (
             <div className="quiz-active card animate-fade-up" key={quizStep}>
               <div className="quiz-active__header">
-                <span className="badge badge-primary">Question {quizStep + 1} / {quizQuestions.length}</span>
+                <span className="badge badge-primary">Question {quizStep + 1} / {currentQuestions.length}</span>
                 <div className="progress-bar" style={{ flex: 1 }}>
-                  <div className="progress-bar-fill" style={{ width: `${((quizStep) / quizQuestions.length) * 100}%` }}></div>
+                  <div className="progress-bar-fill" style={{ width: `${((quizStep) / currentQuestions.length) * 100}%` }}></div>
                 </div>
               </div>
-              <h3 className="quiz-active__question">{quizQuestions[quizStep].q}</h3>
+              <h3 className="quiz-active__question">{currentQuestions[quizStep].q || currentQuestions[quizStep].question}</h3>
               <div className="quiz-options">
-                {quizQuestions[quizStep].options.map((opt, i) => {
-                  const isCorrect = i === quizQuestions[quizStep].correct;
+                {currentQuestions[quizStep].options.map((opt, i) => {
+                  const correctVal = currentQuestions[quizStep].correct;
+                  const correctStr = currentQuestions[quizStep].correctAnswer;
+                  const isCorrect = (typeof correctVal === 'number' ? i === correctVal : opt === correctStr);
                   const isSelected = selectedAns === i;
                   let cls = 'quiz-option';
                   if (showExp && isCorrect) cls += ' quiz-option--correct';
                   if (showExp && isSelected && !isCorrect) cls += ' quiz-option--wrong';
                   return (
                     <button key={i} className={cls} onClick={() => selectAnswer(i)} disabled={selectedAns !== null}>
-                      <span className="quiz-option__letter">{String.fromCharCode(65+i)}</span>
+                      <span className="quiz-option__letter">{String.fromCharCode(65 + i)}</span>
                       <span>{opt}</span>
                       {showExp && isCorrect && <CheckCircle2 size={16} className="quiz-option__icon" />}
                       {showExp && isSelected && !isCorrect && <XCircle size={16} className="quiz-option__icon" />}
@@ -233,12 +279,12 @@ export default function Learn() {
               {showExp && (
                 <div className="quiz-explanation animate-slide-in">
                   <Lightbulb size={15} />
-                  <p>{quizQuestions[quizStep].explanation}</p>
+                  <p>{currentQuestions[quizStep].explanation || 'Correct! Move to the next question.'}</p>
                 </div>
               )}
               {selectedAns !== null && (
                 <button className="btn btn-primary" onClick={nextQuizQ} style={{ marginTop: 'var(--space-4)', width: '100%' }}>
-                  {quizStep === quizQuestions.length - 1 ? 'See Results 🎉' : 'Next Question →'}
+                  {quizStep === currentQuestions.length - 1 ? 'See Results 🎉' : 'Next Question →'}
                 </button>
               )}
             </div>
@@ -246,15 +292,15 @@ export default function Learn() {
 
           {quizDone && (
             <div className="quiz-result card animate-bounce-in">
-              <div className="quiz-result__score-ring" style={{ '--score-pct': `${(score / quizQuestions.length) * 100}%` }}>
+              <div className="quiz-result__score-ring" style={{ '--score-pct': `${(score / currentQuestions.length) * 100}%` }}>
                 <span className="quiz-result__score-num">{score}</span>
-                <span className="quiz-result__score-total">/ {quizQuestions.length}</span>
+                <span className="quiz-result__score-total">/ {currentQuestions.length}</span>
               </div>
               <h3 className="quiz-result__title">
-                {score === quizQuestions.length ? '🎉 Perfect Score!' : score >= 8 ? '🌟 Excellent Work!' : score >= 5 ? '👍 Good Job!' : '📚 Keep Learning!'}
+                {score === currentQuestions.length ? '🎉 Perfect Score!' : score >= 8 ? '🌟 Excellent Work!' : score >= 5 ? '👍 Good Job!' : '📚 Keep Learning!'}
               </h3>
               <p className="quiz-result__subtitle">
-                You answered {score} out of {quizQuestions.length} questions correctly — {Math.round((score / quizQuestions.length) * 100)}%
+                You answered {score} out of {currentQuestions.length} questions correctly — {Math.round((score / currentQuestions.length) * 100)}%
               </p>
               {/* Badge earned */}
               {(() => {

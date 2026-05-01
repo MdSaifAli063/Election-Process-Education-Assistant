@@ -2,14 +2,14 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 
 // Lazy Loaded Pages
-const Home        = lazy(() => import('./pages/Home'));
-const Timeline    = lazy(() => import('./pages/Timeline'));
+const Home = lazy(() => import('./pages/Home'));
+const Timeline = lazy(() => import('./pages/Timeline'));
 const Eligibility = lazy(() => import('./pages/Eligibility'));
-const Learn       = lazy(() => import('./pages/Learn'));
+const Learn = lazy(() => import('./pages/Learn'));
 
 // Global Components
-import Navbar  from './components/Navbar';
-import Footer  from './components/Footer';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -34,14 +34,14 @@ export default function App() {
 
       <Navbar />
       <ScrollToTop />
-      
+
       <main id="main-content" role="main">
         <Suspense fallback={<div className="page-loader">Loading ElectED...</div>}>
           <Routes>
-            <Route path="/"            element={<Home />} />
-            <Route path="/timeline"    element={<Timeline />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/timeline" element={<Timeline />} />
             <Route path="/eligibility" element={<Eligibility />} />
-            <Route path="/learn"       element={<Learn />} />
+            <Route path="/learn" element={<Learn />} />
             <Route path="*" element={
               <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', padding: '2rem', textAlign: 'center' }}>
                 <span style={{ fontSize: '5rem' }}>🗳️</span>
