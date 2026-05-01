@@ -40,11 +40,12 @@ export const generateNimResponse = async (prompt, apiKey, language = 'en-US') =>
  */
 export const generateGeminiResponse = async (prompt, apiKey, language = 'en-US') => {
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Direct connection in production is more robust for Gemini SDK
+  // Restoring proxy for production to match the successful localhost configuration
   const model = genAI.getGenerativeModel(
     { model: "gemini-1.5-flash" }, 
-    { apiVersion: "v1beta" }
+    { apiVersion: "v1beta", baseUrl: `${window.location.origin}/gemini-api` }
   );
+
 
 
 
@@ -73,8 +74,9 @@ export const generateGeminiResponse = async (prompt, apiKey, language = 'en-US')
           console.log(`Trying Gemini fallback: ${fb.model} (${fb.version})`);
           const fbModel = genAI.getGenerativeModel(
             { model: fb.model }, 
-            { apiVersion: fb.version }
+            { apiVersion: fb.version, baseUrl: `${window.location.origin}/gemini-api` }
           );
+
 
           const fbResult = await fbModel.generateContent(`${systemPrompt}\n\n${prompt}`);
           return (await fbResult.response).text();
