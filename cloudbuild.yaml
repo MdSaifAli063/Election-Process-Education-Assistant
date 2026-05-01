@@ -3,13 +3,10 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '--build-arg', 'VITE_GEMINI_API_KEY=${_VITE_GEMINI_API_KEY}',
-      '--build-arg', 'VITE_NVIDIA_NIM_API_KEY=${_VITE_NVIDIA_NIM_API_KEY}',
-      '--build-arg', 'VITE_TAVILY_API_KEY=${_VITE_TAVILY_API_KEY}',
-      '--build-arg', 'VITE_GCP_API_KEY=${_VITE_GCP_API_KEY}',
       '-t', 'gcr.io/$PROJECT_ID/election-assistant',
       '.'
     ]
+
 
   
   # Push the container image to Container Registry
@@ -34,8 +31,3 @@ steps:
 images:
   - 'gcr.io/$PROJECT_ID/election-assistant'
 
-substitutions:
-  _VITE_GEMINI_API_KEY: 'placeholder'
-  _VITE_NVIDIA_NIM_API_KEY: 'placeholder'
-  _VITE_TAVILY_API_KEY: 'placeholder'
-  _VITE_GCP_API_KEY: 'placeholder'

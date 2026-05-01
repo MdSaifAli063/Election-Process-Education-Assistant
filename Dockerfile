@@ -4,16 +4,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-# We need to pass environment variables during build time for Vite
-ARG VITE_GEMINI_API_KEY
-ENV VITE_GEMINI_API_KEY=$VITE_GEMINI_API_KEY
-ARG VITE_NVIDIA_NIM_API_KEY
-ENV VITE_NVIDIA_NIM_API_KEY=$VITE_NVIDIA_NIM_API_KEY
-ARG VITE_TAVILY_API_KEY
-ENV VITE_TAVILY_API_KEY=$VITE_TAVILY_API_KEY
-ARG VITE_GCP_API_KEY
-ENV VITE_GCP_API_KEY=$VITE_GCP_API_KEY
 RUN npm run build
+
 
 
 # Stage 2: Serve the application with Nginx
