@@ -346,6 +346,16 @@
   .navbar__mobile-toggle { display: flex !important; }
   .navbar__icon-btn { width: 36px; height: 36px; }
   .navbar__lang-label { display: none; }
-  .news-ticker { display: none; } /* Hide ticker on mobile to save space */
+  
+  .news-ticker { padding: 4px 0; }
+  .news-ticker__badge, .news-ticker__link { display: none; }
+  .news-ticker__text { font-size: 0.72rem; }
+  .news-ticker__inner { justify-content: center; }
 }
+
+@media (max-width: 480px) {
+  .navbar__logo-text { font-size: 1.2rem; }
+  .navbar__logo-icon { width: 34px; height: 34px; }
+}
+
 

@@ -237,7 +237,20 @@ ul, ol { list-style: none; }
 .text-subheading { font-family: var(--font-sans); font-weight: 600; line-height: 1.4; letter-spacing: -0.01em; }
 
 /* --- Utilities --- */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6); }
+.container { 
+  max-width: 1320px; 
+  margin: 0 auto; 
+  padding: 0 var(--space-8); 
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 var(--space-5); }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 var(--space-4); }
+}
+
 
 .glass {
   background: var(--glass-bg);
