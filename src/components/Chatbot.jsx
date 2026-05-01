@@ -125,15 +125,15 @@ export default function Chatbot() {
       speak(sanitizedText);
     } catch (err) {
       console.error("Chatbot Error:", err);
-
       setIsSearching(false);
       setIsTyping(false);
-      const errMsg = err.message.includes("404") 
-        ? "AI Connection Error (404): The selected model was not found or your project is not enabled for it."
-        : "I'm sorry, I encountered an error connecting to my AI brain. Please check your API keys and project settings.";
+      
+      const errorDetail = err.message || "Unknown error";
+      const errMsg = `I encountered an issue connecting to my AI brain: "${errorDetail}". Please verify your API keys and project settings.`;
+      
       setMessages(prev => [...prev, { type: 'bot', text: errMsg }]);
-
     }
+
   };
 
   const toggleListening = () => {

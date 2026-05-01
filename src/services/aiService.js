@@ -28,8 +28,9 @@ export const generateNimResponse = async (prompt, apiKey, language = 'en-US') =>
     return completion.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
   } catch (error) {
     console.error("NIM Error Details:", error);
-    throw new Error(error.message || 'Failed to fetch from NVIDIA NIM');
+    throw new Error(`NVIDIA NIM: ${error.message || 'Connection failed'}`);
   }
+
 
 };
 
@@ -79,8 +80,9 @@ export const generateGeminiResponse = async (prompt, apiKey, language = 'en-US')
         }
       }
     }
-    throw new Error(`Gemini Error: ${error.message}`);
+    throw new Error(`Gemini: ${error.message || 'Connection failed'}`);
   }
+
 
 
 };
