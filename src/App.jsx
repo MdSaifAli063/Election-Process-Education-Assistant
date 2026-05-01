@@ -19,7 +19,9 @@ function ScrollToTop() {
 export default function App() {
   return (
     <>
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <div className="mesh-bg">
+
         <div className="mesh-blob mesh-blob--1"></div>
         <div className="mesh-blob mesh-blob--2"></div>
         <div className="mesh-blob mesh-blob--3"></div>
