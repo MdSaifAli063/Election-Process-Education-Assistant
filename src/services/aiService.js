@@ -7,7 +7,7 @@ import OpenAI from 'openai';
 export const generateNimResponse = async (prompt, apiKey, language = 'en-US') => {
   const openai = new OpenAI({
     apiKey: apiKey,
-    baseURL: `${window.location.origin}/nim-api`, // Using local proxy
+    baseURL: "https://integrate.api.nvidia.com/v1", 
     dangerouslyAllowBrowser: true 
   });
 
@@ -38,12 +38,13 @@ export const generateNimResponse = async (prompt, apiKey, language = 'en-US') =>
  * Gemini Service
  */
 export const generateGeminiResponse = async (prompt, apiKey, language = 'en-US') => {
-  // Using proxy for Gemini to avoid CORS and potential SDK endpoint issues
   const genAI = new GoogleGenerativeAI(apiKey);
+  // Direct connection in production is more robust for Gemini SDK
   const model = genAI.getGenerativeModel(
     { model: "gemini-1.5-flash" }, 
-    { apiVersion: "v1beta", baseUrl: `${window.location.origin}/gemini-api` }
+    { apiVersion: "v1beta" }
   );
+
 
 
   
