@@ -1,9 +1,8 @@
-/* Floating Action Button */
 .chatbot-fab {
   position: fixed;
   bottom: 28px;
   right: 28px;
-  z-index: var(--z-modal);
+  z-index: 10000; /* Force to top */
   width: 58px;
   height: 58px;
   border-radius: var(--radius-full);
@@ -16,8 +15,14 @@
   transition: var(--transition-normal);
   cursor: pointer;
   border: none;
-  animation: pulse-ring 2.5s infinite;
+  animation: fabReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, pulse-ring 2.5s infinite;
 }
+
+@keyframes fabReveal {
+  from { transform: scale(0) rotate(-45deg); opacity: 0; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
+}
+
 .chatbot-fab:hover {
   transform: scale(1.1) translateY(-2px);
   box-shadow: var(--shadow-xl), 0 0 40px rgba(99,102,241,0.6);
@@ -48,7 +53,7 @@
   position: fixed;
   bottom: 100px;
   right: 28px;
-  z-index: var(--z-modal);
+  z-index: 10000;
   width: 380px;
   max-height: 560px;
   display: flex;

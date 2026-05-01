@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { Sun, Moon, Globe, Menu, X, Vote } from 'lucide-react';
+import { NavLink, useLocation, Link } from 'react-router-dom';
+import { Sun, Moon, Globe, Menu, X, Vote, ChevronRight, Zap } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import './Navbar.css';
@@ -11,7 +11,22 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [newsIndex, setNewsIndex] = useState(0);
   const location = useLocation();
+
+  const news = [
+    "General Elections 2026: Registration opens soon!",
+    "New multilingual guides added for all voters.",
+    "ISRO successfully launches new satellite - check details!",
+    "Interactive quizzes now feature 20+ new scenarios."
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNewsIndex((prev) => (prev + 1) % news.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [news.length]);
   const langRef = useRef(null);
 
   useEffect(() => {
@@ -41,6 +56,28 @@ export default function Navbar() {
 
   return (
     <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`} role="banner">
+      {/* ── News Ticker (Inside Header) ── */}
+      <div className="news-ticker">
+        <div className="container news-ticker__inner">
+          <div className="news-ticker__label">
+            <span className="news-ticker__dot"></span>
+            LIVE
+          </div>
+          <div className="news-ticker__content">
+            <p key={newsIndex} className="news-ticker__text animate-fade-up">
+              {news[newsIndex]}
+            </p>
+          </div>
+          <div className="news-ticker__badge">
+            <Zap size={10} />
+            <span>SMART ELECTION GUIDE</span>
+          </div>
+          <Link to="/learn" className="news-ticker__link">
+            Details <ChevronRight size={12} />
+          </Link>
+        </div>
+      </div>
+
       <div className="container navbar__inner">
         {/* Logo */}
         <NavLink to="/" className="navbar__logo" aria-label="ElectED Home">
@@ -108,6 +145,11 @@ export default function Navbar() {
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
+
+          {/* New Feature: Join Now CTA */}
+          <Link to="/timeline" className="btn btn-primary navbar__cta">
+            Join Now
+          </Link>
 
           {/* Mobile Menu Toggle */}
           <button

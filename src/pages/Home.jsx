@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight, CheckCircle2, Clock, Users, BookOpen, Award,
@@ -68,6 +69,22 @@ const trustBadges = [
 export default function Home() {
   const { t } = useLanguage();
 
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal--visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <div className="home page-enter">
 
@@ -82,11 +99,6 @@ export default function Home() {
 
         <div className="container hero__content">
           <div className="hero__text">
-            <div className="badge badge-primary hero__badge animate-fade-up" style={{ animationDelay: '0.1s' }}>
-              <Zap size={12} />
-              {t('hero.badge')}
-            </div>
-
             <h1 className="text-display hero__title animate-fade-up" style={{ animationDelay: '0.2s' }}>
               {t('hero.title')}{' '}
               <span className="gradient-text">{t('hero.titleAccent')}</span>
@@ -163,8 +175,51 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Voter Dashboard Mockup ── */}
+      <section className="section dashboard-preview reveal" aria-labelledby="dashboard-heading">
+        <div className="container">
+          <div className="dashboard-card glass">
+            <div className="dashboard-card__header">
+              <div>
+                <h2 id="dashboard-heading" className="text-heading dashboard-card__title">Your Voting Readiness</h2>
+                <p className="dashboard-card__subtitle">Personalized tracker for your civic journey</p>
+              </div>
+              <div className="dashboard-card__status">
+                <span className="badge badge-success">85% Ready</span>
+              </div>
+            </div>
+            
+            <div className="dashboard-card__grid">
+              {[
+                { label: 'Registration Status', status: 'Completed', icon: <CheckCircle2 size={18} />, color: 'var(--color-success)' },
+                { label: 'Eligibility Check', status: 'Verified', icon: <CheckCircle2 size={18} />, color: 'var(--color-success)' },
+                { label: 'Polling Location', status: 'Action Required', icon: <Clock size={18} />, color: 'var(--color-warning)' },
+                { label: 'ID Requirements', status: 'Verified', icon: <CheckCircle2 size={18} />, color: 'var(--color-success)' },
+              ].map((item) => (
+                <div key={item.label} className="dashboard-item">
+                  <div className="dashboard-item__icon" style={{ color: item.color }}>
+                    {item.icon}
+                  </div>
+                  <div className="dashboard-item__content">
+                    <p className="dashboard-item__label">{item.label}</p>
+                    <p className="dashboard-item__status">{item.status}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="dashboard-card__footer">
+              <div className="progress-bar">
+                <div className="progress-bar-fill" style={{ width: '85%' }}></div>
+              </div>
+              <p className="dashboard-card__footer-text">Complete your <strong>polling location</strong> check to reach 100%.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Features Section ── */}
-      <section className="section features" aria-labelledby="features-heading">
+      <section className="section features reveal" aria-labelledby="features-heading">
         <div className="container">
           <div className="section-header">
             <span className="badge badge-primary">Core Features</span>
@@ -206,7 +261,7 @@ export default function Home() {
       </section>
 
       {/* ── Process Snapshot ── */}
-      <section className="section process-snapshot" aria-labelledby="process-heading">
+      <section className="section process-snapshot reveal" aria-labelledby="process-heading">
         <div className="container">
           <div className="section-header">
             <span className="badge badge-primary">Process Overview</span>
@@ -235,7 +290,7 @@ export default function Home() {
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="section testimonials" aria-labelledby="testimonials-heading">
+      <section className="section testimonials reveal" aria-labelledby="testimonials-heading">
         <div className="container">
           <div className="section-header">
             <span className="badge badge-gold">Testimonials</span>
@@ -268,7 +323,7 @@ export default function Home() {
       </section>
 
       {/* ── CTA Banner ── */}
-      <section className="cta-banner" aria-label="Call to action">
+      <section className="cta-banner reveal" aria-label="Call to action">
         <div className="container cta-banner__inner">
           <div className="cta-banner__text">
             <h2 className="text-heading cta-banner__title">Ready to Understand Your Vote?</h2>

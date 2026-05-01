@@ -14,7 +14,7 @@
   inset: 0;
   z-index: 0;
   background-color: var(--bg-app);
-  background-image: url('/hero-bg.png');
+  background-image: url('/hero-bg-dark-blur.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -248,6 +248,98 @@
 }
 .hero__stage-num { font-size: 0.65rem; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; line-height: 1; }
 .hero__stage-label { font-size: 0.8rem; color: var(--text-primary); font-weight: 600; line-height: 1.1; }
+
+/* ── Dashboard Preview ── */
+.dashboard-preview {
+  background: var(--bg-app);
+}
+
+.dashboard-card {
+  padding: var(--space-8);
+  border: 1px solid var(--border-glass);
+}
+
+.dashboard-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-8);
+}
+
+.dashboard-card__title {
+  font-size: 1.75rem;
+  margin-bottom: var(--space-1);
+}
+
+.dashboard-card__subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.dashboard-card__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-6);
+  margin-bottom: var(--space-10);
+}
+
+.dashboard-item {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  transition: var(--transition-normal);
+}
+
+.dashboard-item:hover {
+  background: var(--bg-surface);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-item__icon {
+  flex-shrink: 0;
+}
+
+.dashboard-item__label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.dashboard-item__status {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dashboard-card__footer {
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.dashboard-card__footer .progress-bar {
+  margin-bottom: var(--space-4);
+}
+
+.dashboard-card__footer-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 1024px) {
+  .dashboard-card__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .dashboard-card__grid { grid-template-columns: 1fr; }
+  .dashboard-card__header { flex-direction: column; gap: var(--space-4); }
+}
 
 /* ── Stats Bar ── */
 .stats-bar {

@@ -19,6 +19,11 @@ function ScrollToTop() {
 export default function App() {
   return (
     <>
+      <div className="mesh-bg">
+        <div className="mesh-blob mesh-blob--1"></div>
+        <div className="mesh-blob mesh-blob--2"></div>
+        <div className="mesh-blob mesh-blob--3"></div>
+      </div>
       <Navbar />
       <ScrollToTop />
       <main id="main-content" role="main">
