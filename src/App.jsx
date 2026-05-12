@@ -1,13 +1,11 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 
-// Lazy Loaded Pages
 const Home = lazy(() => import('./pages/Home'));
 const Timeline = lazy(() => import('./pages/Timeline'));
 const Eligibility = lazy(() => import('./pages/Eligibility'));
 const Learn = lazy(() => import('./pages/Learn'));
 
-// Global Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
